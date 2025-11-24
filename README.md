@@ -17,13 +17,13 @@ Live demo: [Coming Soon]
 
 ## Project Structure
 my-portfolio/
--├── app.py
--├── requirements.txt
--├── templates/
--│ ├── base.html
--│ ├── index.html
--│ ├── projects.html
--│ └── contact.html
--└── static/
--├── js/script.js
--└── css/style.css
+├── app.py
+├── requirements.txt
+├── templates/
+│ ├── base.html
+│ ├── index.html
+│ ├── projects.html
+│ └── contact.html
+└── static/
+├── js/script.js
+└── css/style.css
