@@ -1,31 +1,79 @@
 {% extends "base.html" %}
 
+{% block title %}Home — {{ profile.name if profile else 'My Portfolio' }}{% endblock %}
+
 {% block content %}
-<section class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-20">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-        <h1 class="text-5xl font-bold mb-6">Hi, I'm Your Name</h1>
-        <p class="text-xl mb-8">Full-Stack Developer</p>
-        <a href="#projects" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold">
-            View My Work
-        </a>
+<section class="bg-gradient-to-r from-amber-500 to-emerald-500 text-white py-20">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <img src="{{ profile.avatar_url if profile and profile.avatar_url else 'https://ui-avatars.com/api/?name={{ (profile.name if profile else \"You\") | urlencode }}&background=7c3aed&color=fff&rounded=true&size=120' }}" alt="avatar" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-white shadow-lg">
+        <h1 class="text-4xl md:text-5xl font-bold mb-3">Hi, I'm {{ profile.name if profile else 'Cynthia' }}</h1>
+        <p class="text-lg md:text-xl mb-6">{{ profile.title if profile and profile.title else 'Web Programmer • Frontend-focused' }}</p>
+        <p class="max-w-2xl mx-auto text-sm md:text-base mb-8 text-white/90">{{ profile.bio if profile and profile.bio else "I'm a web programmer who enjoys building polished, accessible, and performant web experiences. I work mainly with Python and modern frontend tools." }}</p>
+
+        <div class="flex justify-center gap-4">
+            <a href="#projects" class="bg-white text-amber-600 px-6 py-3 rounded-lg font-semibold shadow">View My Work</a>
+            {% if profile and profile.email %}
+            <a href="mailto:{{ profile.email }}" class="bg-white/20 border border-white/30 text-white px-6 py-3 rounded-lg font-semibold">Email Me</a>
+            {% endif %}
+        </div>
     </div>
 </section>
 
-<section id="projects" class="py-16 bg-white">
+<section id="about" class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-4 grid md:grid-cols-3 gap-8 items-start">
+        <div class="md:col-span-2">
+            <h2 class="text-3xl font-bold mb-4">About Me</h2>
+            <p class="text-gray-700 mb-4">{{ profile.about if profile and profile.about else "I build full-stack web applications and small tools that help people get things done. I love clean UI, thoughtful UX, and writing maintainable code. Outside of coding I enjoy photography and cycling." }}</p>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Skills & Tools</h3>
+            <div class="flex flex-wrap gap-3">
+                {% for skill in skills %}
+                <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm border">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-3">Quick Info</h3>
+            <ul class="text-sm text-gray-700 space-y-2">
+                {% if profile.location %}<li><strong>Location:</strong> {{ profile.location }}</li>{% endif %}
+                {% if profile.years %}<li><strong>Experience:</strong> {{ profile.years }} years</li>{% endif %}
+                <li><strong>Primary:</strong> Python, Flask</li>
+                <li><strong>Frontend:</strong> Tailwind, JavaScript</li>
+            </ul>
+
+            <div class="mt-4 space-x-3">
+                {% if profile.github_url %}
+                <a href="{{ profile.github_url }}" class="text-sm text-gray-700 hover:underline" target="_blank"><i class="fab fa-github mr-2"></i>GitHub</a>
+                {% endif %}
+                {% if profile.linkedin_url %}
+                <a href="{{ profile.linkedin_url }}" class="text-sm text-gray-700 hover:underline" target="_blank"><i class="fab fa-linkedin mr-2"></i>LinkedIn</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Featured Projects</h2>
+        <h2 class="text-3xl font-bold text-center mb-8">Featured Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {% for project in projects %}
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                    <i class="fas fa-code text-white text-6xl"></i>
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="h-48 bg-gradient-to-r from-amber-200 to-emerald-200 flex items-center justify-center">
+                    <img src="{{ project.image }}" alt="{{ project.title }}" class="object-cover w-full h-full opacity-60">
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-semibold mb-2">{{ project.title }}</h3>
                     <p class="text-gray-600 mb-4">{{ project.description }}</p>
+                    <div class="flex flex-wrap gap-3 mb-4">
+                        {% for tech in project.technologies %}
+                        <span class="text-sm bg-gray-100 px-2 py-1 rounded">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
                     <div class="flex space-x-4">
-                        <a href="{{ project.github_url }}" class="text-blue-500">Code</a>
-                        <a href="{{ project.live_url }}" class="text-blue-500">Live Demo</a>
+                        <a href="{{ project.github_url }}" class="text-amber-600" target="_blank">Code</a>
+                        <a href="{{ project.live_url }}" class="text-amber-600" target="_blank">Live Demo</a>
                     </div>
                 </div>
             </div>
