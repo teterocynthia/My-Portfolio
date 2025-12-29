@@ -3,28 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Portfolio{% endblock %}</title>
+    <title>{% block title %}{{ profile.name if profile else 'My Portfolio' }}{% endblock %}</title>
+
+    <!-- Tailwind + Font Awesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Friendly font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }</style>
 </head>
 <body class="bg-gray-50">
+
     <nav class="bg-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between py-4">
-                <a href="{{ url_for('home') }}" class="text-2xl font-bold">Your Name</a>
-                <div class="space-x-8">
-                    <a href="{{ url_for('home') }}">Home</a>
-                    <a href="{{ url_for('projects') }}">Projects</a>
-                    <a href="{{ url_for('contact') }}">Contact</a>
+            <div class="flex items-center justify-between py-4">
+                <a href="{{ url_for('home') }}" class="flex items-center space-x-3">
+                    <img src="{{ profile.avatar_url if profile and profile.avatar_url else 'https://ui-avatars.com/api/?name={{ (profile.name if profile else \"You\") | urlencode }}&background=7c3aed&color=fff&rounded=true&size=64' }}" alt="avatar" class="w-10 h-10 rounded-full">
+                    <span class="text-2xl font-bold">{{ profile.name if profile else 'Your Name' }}</span>
+                </a>
+
+                <div class="flex items-center space-x-6">
+                    <div class="hidden md:block space-x-6">
+                        <a href="{{ url_for('home') }}">Home</a>
+                        <a href="{{ url_for('projects') }}">Projects</a>
+                        <a href="{{ url_for('contact') }}">Contact</a>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        {% if profile and profile.github_url %}
+                        <a href="{{ profile.github_url }}" target="_blank" class="text-gray-600 hover:text-gray-900" aria-label="GitHub"><i class="fab fa-github fa-lg"></i></a>
+                        {% endif %}
+                        {% if profile and profile.linkedin_url %}
+                        <a href="{{ profile.linkedin_url }}" target="_blank" class="text-gray-600 hover:text-gray-900" aria-label="LinkedIn"><i class="fab fa-linkedin fa-lg"></i></a>
+                        {% endif %}
+                        {% if profile and profile.email %}
+                        <a href="mailto:{{ profile.email }}" class="text-gray-600 hover:text-gray-900" aria-label="Email"><i class="fas fa-envelope fa-lg"></i></a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
-    
+
+    <!-- Flash messages -->
+    <div class="max-w-7xl mx-auto px-4 mt-6">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="space-y-3">
+              {% for category, msg in messages %}
+                <div class="rounded-md p-4 {% if category == 'success' %}bg-green-50 border border-green-200{% elif category == 'error' %}bg-red-50 border border-red-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
+                  <p class="text-sm text-gray-800">{{ msg }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+    </div>
+
     <main>{% block content %}{% endblock %}</main>
-    
-    <footer class="bg-gray-800 text-white py-8 text-center">
-        <p>&copy; 2024 Your Name. All rights reserved.</p>
+
+    <footer class="bg-gray-800 text-white py-8 text-center mt-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; {{ current_year if current_year else  (2025) }} {{ profile.name if profile else 'Your Name' }}. All rights reserved.</p>
+            <p class="text-sm mt-2">
+                Built with Flask • <a href="https://github.com/{{ profile.github_handle if profile and profile.github_handle else '' }}" class="underline" target="_blank">Source</a>
+            </p>
+        </div>
     </footer>
 </body>
 </html>
